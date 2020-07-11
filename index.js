@@ -42,8 +42,7 @@ app.post('/scheduling/delete', (req, res) => {
         day: day,
         hour: parseInt(hour),
         minute: parseInt(minute),
-    });
-    res.send('success');
+    },res);
 });
 
 app.post('/scheduling/put', (req, res) => {
