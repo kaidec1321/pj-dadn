@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+
+    <title>Lên lịch tưới</title>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <link href="/fontawesome-free-5.13.0-web/css/all.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="/css/schedulingStyles.css">
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <div>
+        <div class="container-fluid">
+            <div class="row">
+
+
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+
+                    <div class="navbar">
+                        <a class="navbar-brand">
+                            <div style="float: left;"><img src="/image/Len_lich_tuoi_cay.png" class="img-responsive" alt="Image"></div>
+                        </a>
+                        <ul class="nav navbar-nav" style="float: right;">
+                            <li class="active">
+                                <a href="#" style="font-size: small;">
+                                    <img src="/image/Trang_chu.png" class="img-responsive" alt="Image">
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                    <button id='add' type="button" class="btn btn-success">Thêm
+                            cuộc hẹn</button>
+                    <div id='form' class="panel panel-primary" style="display: none;">
+                        <div class="panel-heading">
+                            <h3 id='title' class="panel-title"><strong>Thêm
+                                        cuộc hẹn</strong>
+                                <span id='close-form' class="fas
+                                        fa-window-close" style="float:
+                                        right;"></span></h3>
+                        </div>
+                        <div class="panel-body">
+                            <form action="" method="POST" role="form">
+                                <div id="checkbox" class="form-group">
+                                    <label for="">Khu vực</label>
+
+                                    <div id='checkbox-area' class="checkbox">
+                                        <label class="checkbox-inline">
+                                                <input type="checkbox" value="1" checked="checked">1&nbsp;
+                                            </label>
+                                        <label class="checkbox-inline">
+                                                <input type="checkbox" value="2">2&nbsp;
+                                            </label>
+                                        <label class="checkbox-inline">
+                                                <input type="checkbox" value="3">3&nbsp;
+                                            </label>
+                                        <label class="checkbox-inline">
+                                                <input type="checkbox" value="4">4&nbsp;
+                                            </label>
+                                        <label class="checkbox-inline">
+                                                <input type="checkbox" value="Tất">Tất
+                                            </label>
+                                    </div>
+
+                                </div>
+                                <div id="radio" class="form-group">
+                                    <label for="">Khu vực</label>
+
+                                    <div id='radio-area' class="radio">
+                                        <label class="radio-inline">
+                                                <input type="radio" name="radio-area" value="1">1&nbsp;
+                                            </label>
+                                        <label class="radio-inline">
+                                                <input type="radio" name="radio-area" value="2">2&nbsp;
+                                            </label>
+                                        <label class="radio-inline">
+                                                <input type="radio" name="radio-area" value="3">3&nbsp;
+                                            </label>
+                                        <label class="radio-inline">
+                                                <input type="radio" name="radio-area" value="4">4&nbsp;
+                                            </label>
+                                    </div>
+
+                                </div>
+                                <div class="form-group">
+                                    <label>Ngày</label>
+                                    <select id='select-day' class="form-control" id="sel1">
+                                            <option>Thứ hai</option>
+                                            <option>Thứ ba</option>
+                                            <option>Thứ tư</option>
+                                            <option>Thứ năm</option>
+                                            <option>Thứ sáu</option>
+                                            <option>Thứ bảy</option>
+                                            <option>Chủ nhật</option>
+                                            <option>Tất cả</option>
+                                        </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="">Giờ</label>
+                                    <input id='text-hour' type="text" class="form-control" name="" id="" aria-describedby="helpId" value='0' placeholder="0">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="">Phút</label>
+                                    <input id='text-minute' type="text" class="form-control" name="" id="" aria-describedby="helpId" value='0' placeholder="0">
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-6 col-sm-6 col-md-6
+                                            col-lg-6">
+                                        <button id='done-form' type="button" class="btn
+                                                btn-large btn-block
+                                                btn-success">
+                                                Xong
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                    </div>
+                                    <div class="col-xs-6 col-sm-6 col-md-6
+                                            col-lg-6">
+                                        <button id='erase-form' type="button" class="btn
+                                                btn-large btn-block
+                                                btn-warning">
+                                                Tẩy
+                                                <i class="fas fa-eraser"></i>
+                                            </button>
+                                    </div>
+
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div id='schedule' class="col-xs-10 col-sm-10 col-md-10
+                        col-lg-10">
+
+
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <h3 class="panel-title" style="text-align:
+                                    center;"><strong><i class="fas fa-calendar    "></i> Lịch tưới cây</strong></h3>
+                        </div>
+                        <div class="panel-body" style="height:480px ;
+                                overflow-y: scroll;">
+                            <table id='appointments' class="table table-hover">
+                                <tbody>
+                                    <tr id="mold" style="display: none;">
+                                        <td><i class="fas fa-seedling    " style="color: green;"></i></td>
+                                        <td>Khu vực <span id='area'>1</span></td>
+                                        <td><span id='day'>Thứ hai</span></td>
+                                        <td><span id='hour'>5</span> giờ
+                                            <span id='minute'>30</span> phút</td>
+                                        <td id='remove' style="color: red;"><i class="fas
+                                                fa-trash-alt"></i>&nbsp;
+                                        </td>
+                                        <td id='edit' style="color: orange;">
+                                            <i class="fas
+                                                fa-pen-alt"></i></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="/script/scheduling.js"></script>
+</body>
+
+</html>
