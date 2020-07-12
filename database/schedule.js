@@ -97,25 +97,26 @@ async function schedule_Post(doc, res = {}) {
                 }
                 return;
             }
+            job[_id] = new CronJob({
+                cronTime: '0 ' + doc.minute + ' ' + doc.hour + ' * * ' + dayInWeek[doc.day], // Chạy Jobs vào thời điểm đã hẹn
+                onTick: function() {
+                    //Làm gì đó đi
+
+
+
+
+
+
+
+
+                    //
+                    console.log('0 ' + doc.minute + ' ' + doc.hour + ' * * ' + dayInWeek[doc.day] + ' Cron jub runing...');
+                },
+                start: true,
+                timeZone: 'Asia/Ho_Chi_Minh' // Lưu ý set lại time zone cho đúng 
+            });
+            job[_id].start();
             if ('send' in res) {
-                job[_id] = new CronJob({
-                    cronTime: '0 ' + doc.minute + ' ' + doc.hour + ' * * ' + dayInWeek[doc.day], // Chạy Jobs vào thời điểm đã hẹn
-                    onTick: function() {
-                        //Làm gì đó đi
-
-
-
-
-
-
-
-                        //
-                        console.log('0 ' + doc.minute + ' ' + doc.hour + ' * * ' + dayInWeek[doc.day] + ' Cron jub runing...');
-                    },
-                    start: true,
-                    timeZone: 'Asia/Ho_Chi_Minh' // Lưu ý set lại time zone cho đúng 
-                });
-                job[_id].start();
                 res.send('success');
             }
             return;
@@ -136,8 +137,7 @@ async function schedule_Delete(doc, res = {}) {
                 return;
             }
         }
-        let cronJob = job[doc._id];
-        cronJob.stop();
+        job[doc._id].stop();
         if ('send' in res) {
             res.send('success');
             return;
