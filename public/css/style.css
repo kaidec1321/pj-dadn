@@ -134,7 +134,7 @@ h3{
 /* --------------------------Header---------------------- */
 /* ------------------------------------------------------ */
 header{
-    height: 100vh;
+    height: 80vh;
     /* view height 100vh laf 100% giao dien cua web size */
     width: 100%;
     /* giu cho backround dung im trong nen va khong di chuyen khi keo chuot */
@@ -263,4 +263,5 @@ header{
     font-weight: 500;
     color: black;
     padding-right: 70px;
+    margin-top: 3%;
 }

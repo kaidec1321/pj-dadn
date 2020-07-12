@@ -73,6 +73,11 @@ app.get('/temphumi', (req, res) => {
     res.sendFile(__dirname + '/views/temphumi.html');
 });
 
+//View history
+app.get('/history', (req, res) => {
+    res.sendFile(__dirname + '/views/history.html');
+});
+
 // var io = require('socket.io')(webserver)
 
 // io.on('connection', function (client) {
