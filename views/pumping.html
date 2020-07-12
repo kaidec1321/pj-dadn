@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <title>Bơm nước</title>
+    <link rel="stylesheet" href="/css/pump.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <link href="/fontawesome-free-5.13.0-web/css/all.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+    <div class="info-bar">
+        <img src="/image/user.png" alt="avatar"> <a href="scheduling"><button>Trang chủ</button></a>
+    </div>
+
+    <br><br><br><br>
+
+    <div class="tophead">
+        <h1>BƠM NƯỚC   <img src="/image/pump.png" alt="pump"></h1>
+    </div>
+
+    <div class="container">
+        <form method="POST" action='/pumping/submit-form' id="my-form">
+            <div class="row">
+                <div class="col-25">
+                    <label for="time">Nhập thời gian bơm:</label>
+                </div>
+                <div class="col-75">
+                    <p><input type="number" id="time" name="minutes" min="1" placeholder="Nhập số phút..."> phút</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                    <label for="myRange">Chọn cường độ bơm:</label>
+                </div>
+                <div class="col-75">
+                    <div class="slidecontainer">
+                        <input type="range" min="0" max="255" value="50" class="slider" id="myRange" name="intensity">
+                    </div>
+                    <lable for="myRange" id="rangeVal">50</lable>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                    <label for="area">Chọn khu vực bơm:</label>
+                </div>
+                <div class="col-75">
+                    <input type="checkbox" id="area1" name="area" value="1">
+                    <label for="area1">Khu vực 1</label>
+                    <div class="cbr">
+                        <input type="checkbox" id="area2" name="area" value="2">
+                        <label for="area2">Khu vực 2</label>
+                    </div>
+                    <br>
+                    <input type="checkbox" id="area3" name="area" value="3">
+                    <label for="area3">Khu vực 3</label>
+                    <div class="cbr">
+                        <input type="checkbox" id="area4" name="area" value="4">
+                        <label for="area4">Khu vực 4</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="start">
+                    <input type="submit" id="startbtn" name="type" value="BƠM NƯỚC NGAY">
+                </div>
+                <div class="stop">
+                    <input type="submit" id="stopbtn" name="type" value="DỪNG BƠM">
+                </div>
+            </div>
+            <div class="row" id="server-results"></div>
+        </form>
+    </div>
+    <script src="/script/pumping.js"></script>
+
+
+
+</body>
+
+
+
+</html>

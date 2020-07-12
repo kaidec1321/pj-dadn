@@ -52,20 +52,22 @@ function displayAppointment(area, day, hour, minute) {
             toggleForm();
             $focusAppointment = null;
         }
-        $.ajax({
-            url: 'http://localhost:3000/scheduling/delete',
-            type: 'post',
-            dataType: 'text',
-            data: {
-                area: area,
-                day: day,
-                hour: hour,
-                minute: minute
-            },
-            success: function(result) {
-                $appointment.remove();
-            }
-        })
+        if (confirm("Bạn có thực sự muốn xóa?")) {
+            $.ajax({
+                url: 'http://localhost:3000/scheduling/delete',
+                type: 'post',
+                dataType: 'text',
+                data: {
+                    area: area,
+                    day: day,
+                    hour: hour,
+                    minute: minute
+                },
+                success: function(result) {
+                    $appointment.remove();
+                }
+            })
+        }
 
     });
     $appointment.find('#edit').click(function() {
@@ -179,7 +181,6 @@ function sortAppointments() {
 }
 
 $(document).ready(function() {
-
     $.ajax({
         url: 'http://localhost:3000/scheduling/get',
         type: 'get',
@@ -215,7 +216,7 @@ $(document).ready(function() {
         if (isNaN(hour) || isNaN(minute) || hour < 0 || hour > 23 || minute < 0 || minute > 59 || hour.toString() !== rawHour || minute.toString() !== rawMinute) {
             eraseForm();
             toggleForm();
-            console.log('aaa');
+            alert("Dữ liệu bạn nhập không đúng!");
             return;
         }
         if ($focusAppointment !== null) {

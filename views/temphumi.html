@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Xem Trạng Thái</title>
+        <meta charset="utf-8"/>
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+        <link href="/fontawesome-free-5.13.0-web/css/all.css" rel="stylesheet">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <style>
+            body { font-family: Arial;}
+            .main-bar h1 {
+                text-align: center;
+                vertical-align: middle;
+                color: #3399FF;
+            }
+            .main-bar img {
+                width: 120px;
+                height: 120px;
+                transition: transform .2s;
+            }
+            .main-bar img:hover{
+                transform: scale(1.2);
+            }
+            .table-status{
+                border: 1px solid black;
+                text-align: center;
+                border-collapse: collapse;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            th, td {
+                font-size: 20px;
+                width: 275px;
+                height: 45px;
+                border: 1px solid black;
+                text-align: center;
+            }
+            .update {
+                text-align: center;
+            }
+            .update input, button {
+                width: 200px;
+                height: 75px;
+                font-size: 32px;
+                background-color: #0000FF;
+                color: white;
+                border-radius: 36px;
+            }
+            .mainpage-bar {
+                float: right;
+                padding-right: 100px;
+            }
+            .mainpage-bar img {
+                width: 200px;
+                height: 100px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="mainpage-bar">
+            <img src="/image/Trangchu.png">
+        </div>
+        <br><br><br><br>
+        <div class="main-bar">
+            <h1>XEM TRẠNG THÁI <img src="/image/360.jpg"></h1>
+        </div>
+        <br>
+        <table class="table-status" id="table-status">
+            <tr>
+                <th>Khu vực</th>
+                <th>Ánh sáng</th>
+                <th>Độ ẩm</th>
+            </tr>
+            <p id="result"></p>
+            <tr>
+                <th>1</th>
+                <th><var id="temp">0</var></th>
+                <th><var id="humi">0</var></th>
+            </tr>
+        </table>
+        <br>
+        <form id= "update" class="update">
+            <input type="submit" value= "CẬP NHẬT" />
+        </form>
+        <ul id="thread"></ul>
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="/"></script>
+		
+		<script src="/script/temphumi.js"></script>
+    </body>
+</html>

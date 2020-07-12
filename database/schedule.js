@@ -109,7 +109,6 @@ async function schedule_Post(doc, res = {}) {
 
 
 
-
                         //
                         console.log('0 ' + doc.minute + ' ' + doc.hour + ' * * ' + dayInWeek[doc.day] + ' Cron jub runing...');
                     },
@@ -137,7 +136,8 @@ async function schedule_Delete(doc, res = {}) {
                 return;
             }
         }
-        job[doc._id].stop();
+        let cronJob = job[doc._id];
+        cronJob.stop();
         if ('send' in res) {
             res.send('success');
             return;
