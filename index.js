@@ -63,7 +63,7 @@ app.post('/pumping/submit-form', function(req, res) {
     // iot.end();
 });
 
-//View temphumi status
+//View status
 app.get('/temphumi', (req, res) => {
     res.sendFile(__dirname + '/views/temphumi.html');
 });
