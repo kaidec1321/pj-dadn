@@ -3,6 +3,7 @@ var mqtt = require('mqtt');
 var bodyparser = require('body-parser');
 var multer = require('multer');
 var { schedule_Post, schedule_Put, schedule_Delete, schedule_Get } = require('./database/schedule.js');
+var job = {};
 
 var app = express();
 var upload = multer();
@@ -26,9 +27,14 @@ app.post('/pumping/submit-form', function(req, res) {
     console.log(req.body);
     if (req.body.type == "BƠM NƯỚC NGAY") {
         var message = JSON.stringify([{device_id:"Speaker",values:["1", req.body.intensity]}]);
+        var date = new Date();
         var topic = "Topic/Speaker";
         publisher.publish(topic, message);
-        console.log("Message: " + message + " sent to " + topic);
+        console.log("Message: " + message + " sent to " + topic + " at " + date);
+        var time2Pump = parseInt(req.body.minutes);
+        const taskID = setTimeout(() => {
+            console.log("Task created at " + date + " finished, stop pumping.")
+        }, time2Pump*60000)
     }
     if (req.body.type == "DỪNG BƠM") {
         var message = JSON.stringify([{device_id:"Speaker", values:["0","0"]}]);
