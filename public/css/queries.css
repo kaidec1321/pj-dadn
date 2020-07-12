@@ -1,0 +1,186 @@
+/* big tablet to 1200px */
+@media only screen and (max-width: 1200px){
+    html{
+        font-size: 16px;
+    }
+    .heading-main-text{
+        transform: translate(-35%,-50%);
+    }
+}
+
+/* small tablet to big tablet 750px to 1023px */
+@media only screen and (max-width: 1023px){
+    .logo{
+        width: 300px;
+        margin-left: 20px;
+    }
+    .main-nav{
+        margin-right: 15px;
+        margin-top: 40px;
+    }
+    .main-nav li{
+        margin-right: 10px;
+    }
+    .heading-main-text{
+        transform: translate(-20%,-40%);
+    }
+
+    .products-section .btn{
+        width: 80%;
+        margin-left: 10%;
+    }
+
+    .product-box{
+        width: 95%;
+    }
+
+    h3{
+        font-size: 90%;
+    }
+
+    .products-section ul li{
+        font-size: 90%;
+    }
+
+    .social-icons li{
+        margin-left: 10px;
+    }
+    
+    .information i{
+        display: block;
+    }
+
+    .information li{
+        font-size: 14px;
+    }
+    form{
+        width: 80%;
+        margin-left: 25%;
+    }
+}
+
+/* small phones to small tablet */
+@media only screen and (max-width: 750px){
+    .col{
+        width: 100%;
+    }
+    .main-nav{
+        visibility: hidden; /*hoc la width: 0%;*/
+    }
+    .logo{
+        width: 350px;
+        margin-left: 12%;
+        margin-right: 10%;
+    }
+    h1{
+        word-spacing: 2px;
+        /* phan tram cang lon, chu cang nho */
+        font-size: 250%;
+    }
+    .heading-main-text{
+        transform: translate(-18%,-50%);
+    }
+    .heading-main-text .btn{
+        width: 15%;
+    }
+
+    .about-section .row .p-long{
+        font-size: 20px;
+    }
+    .picture-about{
+        text-align: center;
+    }
+    .picture-about img{
+        width: 70%;
+    }
+    .picture-title{
+        margin-left: 7%;
+        font-size: 25px;
+        transform: translate(-20%,-50%);
+        /* chinh bay lam cho no bay tu phai sang trai^^ */
+    }
+    .product-box{
+        width: 60%;
+        margin-left: 20%;
+    }
+    .product-box ul li{
+        margin-left: 25%;
+    }
+    .testimonials-section .row .col{
+        margin-bottom: 50px;
+    }
+    
+    figcaption{
+        visibility: hidden;
+    }
+    .logo-sponsor{
+        width: 120px;
+    }
+    form{
+        width: 80%;
+        margin-left: 10%;
+    }
+    label{
+        margin-left: 35%;
+    }
+    .information{
+        margin-top: 20px;
+        text-align: center;
+    }
+    .information li{
+        font-size: 20px;
+    }
+    .social-icons{
+        text-align: center;
+    }
+    .social-icons li{
+        font-size: 60px;
+        margin-bottom: 20px;
+    }
+}
+
+/* small phones from 0 to 480px */
+@media only screen and (max-width: 480px){
+    html{
+        font-size: 12px;
+    }
+    h1{
+        font-size: 200%;
+    }
+
+    .logo{
+        width: 200px;
+        margin-top: 15%;
+        margin-left: 12%;
+    }
+
+    .logo-sponsor{
+        width: 110px;
+        margin-left: -10%;
+    }
+
+    .heading-main-text{
+        transform: translate(-10%,-50%);
+    }
+
+    .heading-main-text .btn{
+        display: block;
+        margin-bottom: 20px;
+        margin-left: 2%;
+    }
+
+    .information li{
+        font-size: 16px;
+    }
+    .social-icons li{
+        font-size: 30px;
+    }
+
+    form{
+        width: 90%;
+        margin-left: 5%;
+    }
+    input, textarea{
+        margin-left: 12%;
+    }
+}
