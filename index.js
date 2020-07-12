@@ -3,7 +3,7 @@ var mqtt = require('mqtt');
 var bodyparser = require('body-parser');
 var multer = require('multer');
 var { schedule_Post, schedule_Put, schedule_Delete, schedule_Get } = require('./database/schedule.js');
-var job = {};
+var task = null;
 
 var app = express();
 var upload = multer();
@@ -34,9 +34,13 @@ app.post('/pumping/submit-form', function(req, res) {
         var startDate = new Date();
         var topic = "Topic/Speaker";
         publisher.publish(topic, message);
-        console.log("Message: " + message + " sent to " + topic + " at " + date);
+        console.log("Message: " + message + " sent to " + topic + " at " + startDate);
         var time2Pump = parseInt(req.body.minutes);
-        const taskID = setTimeout(() => {
+        if (task != null) {
+            clearTimeout(task); 
+            task = null;
+        }
+        task = setTimeout(() => {
             var message = JSON.stringify([{device_id:"Speaker", values:["0","0"]}]);
             var topic = "Topic/Speaker";
             var endDate = new Date();
@@ -62,6 +66,7 @@ app.post('/pumping/submit-form', function(req, res) {
     // })
     // iot.end();
 });
+
 
 //View temphumi status
 app.get('/temphumi', (req, res) => {
