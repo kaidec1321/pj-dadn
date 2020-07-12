@@ -52,22 +52,20 @@ function displayAppointment(area, day, hour, minute) {
             toggleForm();
             $focusAppointment = null;
         }
-        if (confirm("Bạn có thực sự muốn xóa?")) {
-            $.ajax({
-                url: 'http://localhost:3000/scheduling/delete',
-                type: 'post',
-                dataType: 'text',
-                data: {
-                    area: area,
-                    day: day,
-                    hour: hour,
-                    minute: minute
-                },
-                success: function(result) {
-                    $appointment.remove();
-                }
-            })
-        }
+        $.ajax({
+            url: 'http://localhost:3000/scheduling/delete',
+            type: 'post',
+            dataType: 'text',
+            data: {
+                area: Number($appointment.find('#area').text()),
+                day: $appointment.find('#day').text(),
+                hour: Number($appointment.find('#hour').text()),
+                minute: Number($appointment.find('#minute').text())
+            },
+            success: function(result) {
+                $appointment.remove();
+            }
+        })
 
     });
     $appointment.find('#edit').click(function() {
@@ -122,7 +120,6 @@ function updateAppointment(area, day, hour, minute) {
             oldDay: oldDay,
             oldHour: oldHour,
             oldMinute: oldMinute,
-
             area: area,
             day: day,
             hour: hour,
@@ -181,6 +178,7 @@ function sortAppointments() {
 }
 
 $(document).ready(function() {
+
     $.ajax({
         url: 'http://localhost:3000/scheduling/get',
         type: 'get',
@@ -216,7 +214,7 @@ $(document).ready(function() {
         if (isNaN(hour) || isNaN(minute) || hour < 0 || hour > 23 || minute < 0 || minute > 59 || hour.toString() !== rawHour || minute.toString() !== rawMinute) {
             eraseForm();
             toggleForm();
-            alert("Dữ liệu bạn nhập không đúng!");
+            console.log('aaa');
             return;
         }
         if ($focusAppointment !== null) {
