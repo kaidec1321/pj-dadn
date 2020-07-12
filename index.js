@@ -17,6 +17,10 @@ app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(upload.array());
 
+app.get('/index', (req, res) => {
+    res.sendFile(__dirname + '/views/homepage.html');
+});
+
 //Pumping
 
 app.get('/pumping', (req, res) => {
@@ -27,13 +31,18 @@ app.post('/pumping/submit-form', function(req, res) {
     console.log(req.body);
     if (req.body.type == "BƠM NƯỚC NGAY") {
         var message = JSON.stringify([{device_id:"Speaker",values:["1", req.body.intensity]}]);
-        var date = new Date();
+        var startDate = new Date();
         var topic = "Topic/Speaker";
         publisher.publish(topic, message);
         console.log("Message: " + message + " sent to " + topic + " at " + date);
         var time2Pump = parseInt(req.body.minutes);
         const taskID = setTimeout(() => {
-            console.log("Task created at " + date + " finished, stop pumping.")
+            var message = JSON.stringify([{device_id:"Speaker", values:["0","0"]}]);
+            var topic = "Topic/Speaker";
+            var endDate = new Date();
+            publisher.publish(topic, message);
+            console.log("Message: " + message + " sent to " + topic + " at " + endDate);
+            console.log("Task created at " + startDate + " finished, stop pumping.")
         }, time2Pump*60000)
     }
     if (req.body.type == "DỪNG BƠM") {
