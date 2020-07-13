@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const CronJob = require('cron').CronJob;
 mongoose.set('useFindAndModify', false);
+const { history_Get, history_Post } = require('./history.js');
+
 var dayInWeek = {
     "Thứ hai": 1,
     "Thứ ba": 2,
@@ -18,10 +20,6 @@ mongoose.connect('mongodb://localhost/farming', {
 });
 
 var scheduleSchema = mongoose.Schema({
-    _id: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true
-    },
     _owner_id: {
         type: mongoose.Schema.Types.ObjectId,
     },
@@ -65,15 +63,20 @@ var schedule = mongoose.model('schedules', scheduleSchema);
 
 
 async function schedule_Post(doc, res = {}) {
-    let _id = mongoose.Types.ObjectId();
-    await schedule.find({
-        day: doc.day,
-        hour: doc.hour,
-        minute: doc.minute,
-        area: doc.area,
-    }).exec(function(err, docs) {
+    /* 
+    doc là một đối tượng
+    doc={
+        day: "Thứ hai" -> "Chủ Nhật", (nhớ gõ bằng unicode tổ hợp)
+        hour: 1 số nguyên,
+        minute: 1 số nguyên,
+        area: 1->4
+    } 
+    
+    res là một đối tượng Response*/
+    await schedule.find(doc).exec(function(err, docs) {
         if (err) {
             if ('send' in res) {
+                console.log(err.message);
                 res.send('fail');
             }
             return;
@@ -84,38 +87,37 @@ async function schedule_Post(doc, res = {}) {
             }
             return;
         }
-        schedule.create({
-            _id: _id,
-            day: doc.day,
-            hour: doc.hour,
-            minute: doc.minute,
-            area: doc.area,
-        }, (err, docs) => {
+        schedule.create(doc, (err, created_doc) => {
             if (err) {
                 if ('send' in res) {
+                    console.log(err.message);
                     res.send('fail');
                 }
                 return;
             }
-            job[_id] = new CronJob({
+            job[created_doc._id] = new CronJob({
                 cronTime: '0 ' + doc.minute + ' ' + doc.hour + ' * * ' + dayInWeek[doc.day], // Chạy Jobs vào thời điểm đã hẹn
                 onTick: function() {
                     //Làm gì đó đi
-
-
-
-
-
-
-
-
+                    let date_time = Date.now();
+                    history_Post({
+                        _owner_id: mongoose.Types.ObjectId(),
+                        area: doc.area,
+                        luminosity: 1000,
+                        humidity: 1000,
+                        water: 1000,
+                        date_time: date_time
+                    });
+                    // Khởi động máy bơm
+                    //await Pumb();
                     //
+
                     console.log('0 ' + doc.minute + ' ' + doc.hour + ' * * ' + dayInWeek[doc.day] + ' Cron jub runing...');
                 },
                 start: true,
                 timeZone: 'Asia/Ho_Chi_Minh' // Lưu ý set lại time zone cho đúng 
             });
-            job[_id].start();
+            job[created_doc._id].start();
             if ('send' in res) {
                 res.send('success');
             }
@@ -125,19 +127,24 @@ async function schedule_Post(doc, res = {}) {
 }
 
 async function schedule_Delete(doc, res = {}) {
-    await schedule.findOneAndDelete({
-        day: doc.day,
-        hour: doc.hour,
-        minute: doc.minute,
-        area: doc.area
-    }, (err, doc) => {
+    /* 
+    doc là một đối tượng
+    doc={
+        day: "Thứ hai" -> "Chủ Nhật", (nhớ gõ bằng unicode tổ hợp)
+        hour: 1 số nguyên,
+        minute: 1 số nguyên,
+        area: 1->4
+    } 
+    
+    res là một đối tượng Response*/
+    await schedule.findOneAndDelete(doc, (err, deleted_doc) => {
         if (err) {
             if ('send' in res) {
                 res.send('fail');
                 return;
             }
         }
-        job[doc._id].stop();
+        job[deleted_doc._id].stop();
         if ('send' in res) {
             res.send('success');
             return;

@@ -3,15 +3,13 @@ const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/farming', {
     useNewUrlParser: true,
     useUnifiedTopology: true
+}, err => {
+    if (err) throw err;
 });
 
 var historySchema = mongoose.Schema({
-    _id: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true
-    },
     _owner_id: {
-        type: mongoose.Schema.Types.ObjectId
+        type: mongoose.Schema.Types.ObjectId,
     },
     date_time: {
         type: Date,
@@ -21,7 +19,7 @@ var historySchema = mongoose.Schema({
         type: Number,
         required: true,
     },
-    luminostity: {
+    luminosity: {
         type: Number,
         required: true,
     },
@@ -51,20 +49,26 @@ async function history_Get(res, _owner_id = '') {
 }
 
 async function history_Post(doc, res = {}) {
-    await history.create({
-        _id: mongoose.Types.ObjectId(),
-        _owner_id: doc._owner_id,
-        area: doc.area,
-        luminostity: doc.luminostity,
-        humidity: doc.humidity,
-        water: doc.water
-    }, (err) => {
+    /* 
+    doc là một đối tượng
+    doc={
+        date_time: Date.now()(thời điểm sự kiện diễn ra).
+        area: 1->4,
+        luminosity: 1 số nguyên (độ sáng),
+        humidity: 1 số nguyên (độ ẩm),
+        water: 1 số nguyên (lượng nước tưới)
+    } 
+    
+    res là một đối tượng Response*/
+    await history.create(doc, (err) => {
         if (err) {
+            console.log(err.message);
             if ('send' in res) {
                 res.send('fail');
             }
             return;
         }
+        console.log('success');
         if ('send' in res) {
             res.send('success');
         }
