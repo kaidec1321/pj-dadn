@@ -1,8 +1,7 @@
 function fetchMostRecentData() {
 	fetch("/data")
 	.then(response => response.json())
-	.then(data => updateView(data))
-	.catch(err => showError(err));
+	.then(data => updateView(data));
 }
 
 function updateView(data) {
