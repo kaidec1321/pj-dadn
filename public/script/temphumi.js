@@ -1,14 +1,18 @@
-var temp = document.getElementById("temp")
-var humi = document.getElementById("humi")
-
-$(document).ready(function() {
-	var refresher = setInterval(update_content(), 10000);
-})
-function update_content() {
-	$.ajax({
-		url: "temphumi.html",
-		cache: false,
-		success: success
-	})
-	var newDoc = document
+function fetchMostRecentData() {
+	fetch("/data")
+	.then(response => response.json())
+	.then(data => updateView(data))
+	.catch(err => showError(err));
 }
+
+function updateView(data) {
+	var temp = document.getElementById("temp");
+	var humi = document.getElementById("humi")
+	temp.innerHTML = data[0]
+	humi.innerHTML = data[1]
+}
+
+function showError(err) {
+	alert(err)
+}
+setInterval(fetchMostRecentData, 5000)

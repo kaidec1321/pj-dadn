@@ -1,9 +1,12 @@
 var mqtt =  require('mqtt');
 var iot = mqtt.connect('http://localhost:1883');
 
-var time = setInterval(sendData, 5000)
+let temp = 0
+var time = setInterval(sendData, 10000)
 function sendData() {
-    message = JSON.stringify([{"device_id":"TempHumi","values":["25","72"]}]);
+    temp = temp + 1
+    message = JSON.stringify([{"device_id":"TempHumi","values":[temp.toString(),"72"]}]);
     console.log(message.toString())
     iot.publish('Topic/TempHumi', message);
 }
+sendData()
