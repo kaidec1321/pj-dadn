@@ -41,3 +41,23 @@
     font-size: 20px;
     font-family: Arial;
 }
+
+.info-bar {
+    float: right;
+    padding-top: 1em;
+    padding-right: 5.5em;
+  }
+  
+  .info-bar button {
+    font-size: 20px;
+    color: rgb(243, 241, 241);
+    background-color: rgb(87, 86, 86);
+    border: none;
+    width: 10em;
+    height: 2.5em;
+    border-radius: 50px;
+  }
+  
+  .info-bar button:hover {
+    background-color: rgb(29, 29, 29);
+  }
