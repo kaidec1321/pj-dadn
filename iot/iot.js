@@ -24,11 +24,7 @@ pumpListener.on('message', function(topic, message) {
     }   
 });
 
-<<<<<<< HEAD
-tempHumiListener.subscribe('Topic/TempHumi');
-=======
 tempHumiListener.subscribe("Topic/TempHumi")
->>>>>>> 3cd070e1900e2d597399705bb678cbb1e355826b
 tempHumiListener.on('message', function(topic, message) {
     var status = JSON.parse(message.toString());
     console.log(status);
@@ -38,9 +34,10 @@ tempHumiListener.on('message', function(topic, message) {
         //Check humidity, temperature and auto-pump if the conditions - decided by the team, are satisfied  
         if (humidity < 20 && temperature > 30 && !pumpState) {
             console.log('Temperature: ' + status[0].values[0] + ' - Humidity: ' + status[0].values[1] + ' - AUTO START MOTOR');
-            var message = JSON.stringify([{device_id: 'Speaker', values: ['1', '150']}]);
-            publisher.publish('Topic/Speaker', message);
-            console.log("Message: " + message + " auto sent to Topic/Speaker");
+            // var message = JSON.stringify([{device_id: 'Speaker', values: ['1', '150']}]);
+            // publisher.publish('Topic/Speaker', message);
+            publishPumpMessage(1, 2, "150", "1")
+            // console.log("Message: " + message + " auto sent to Topic/Speaker");
         }
     }
     catch {
