@@ -27,6 +27,7 @@ function updateForm() {
         $('#select-day').val($focusAppointment.find('#day').text());
         $('#text-hour').val($focusAppointment.find('#hour').text());
         $('#text-minute').val($focusAppointment.find('#minute').text());
+        $('#text-water').val($focusAppointment.find('#water').text());
     }
 }
 
@@ -38,15 +39,17 @@ function eraseForm() {
     $('#select-day').val('Thứ hai');
     $('#text-hour').val(0);
     $('#text-minute').val(0);
+    $('#text-water').val(0);
 };
 
-function displayAppointment(area, day, hour, minute) {
+function displayAppointment(area, day, hour, minute, water) {
     let $appointment = $('#mold').clone();
     $appointment.css('display', '');
     $appointment.find('#area').text(area);
     $appointment.find('#day').text(day);
     $appointment.find('#hour').text(hour);
     $appointment.find('#minute').text(minute);
+    $appointment.find('#water').text(water);
     $appointment.find('#remove').click(function() {
         if ($focusAppointment === $appointment) {
             toggleForm();
@@ -60,7 +63,8 @@ function displayAppointment(area, day, hour, minute) {
                 area: Number($appointment.find('#area').text()),
                 day: $appointment.find('#day').text(),
                 hour: Number($appointment.find('#hour').text()),
-                minute: Number($appointment.find('#minute').text())
+                minute: Number($appointment.find('#minute').text()),
+                water: Number($appointment.find('#water').text())
             },
             success: function(result) {
                 $appointment.remove();
@@ -85,7 +89,7 @@ function displayAppointment(area, day, hour, minute) {
     $('#appointments tbody').append($appointment);
 };
 
-function createAppointment(area, day, hour, minute) {
+function createAppointment(area, day, hour, minute, water) {
     $.ajax({
         url: 'http://localhost:3000/scheduling/post',
         type: "post",
@@ -95,22 +99,24 @@ function createAppointment(area, day, hour, minute) {
             day: day,
             hour: hour,
             minute: minute,
+            water: water
         },
         success: function(result) {
             console.log(result);
             if (result === 'success') {
-                displayAppointment(area, day, hour, minute);
+                displayAppointment(area, day, hour, minute, water);
             }
         }
     })
 
 };
 
-function updateAppointment(area, day, hour, minute) {
+function updateAppointment(area, day, hour, minute, water) {
     let oldArea = $focusAppointment.find('#area').text();
     let oldDay = $focusAppointment.find('#day').text();
     let oldHour = $focusAppointment.find('#hour').text();
     let oldMinute = $focusAppointment.find('#minute').text();
+    let oldWater = $focusAppointment.find('#water').text();
     $.ajax({
         url: 'http://localhost:3000/scheduling/put',
         type: 'post',
@@ -120,10 +126,12 @@ function updateAppointment(area, day, hour, minute) {
             oldDay: oldDay,
             oldHour: oldHour,
             oldMinute: oldMinute,
+            oldWater: oldWater,
             area: area,
             day: day,
             hour: hour,
             minute: minute,
+            water: water
         },
         success: function(result) {
             console.log(result);
@@ -132,6 +140,7 @@ function updateAppointment(area, day, hour, minute) {
                 $focusAppointment.find('#day').text(day);
                 $focusAppointment.find('#hour').text(hour);
                 $focusAppointment.find('#minute').text(minute);
+                $focusAppointment.find('#water').text(water);
                 $focusAppointment = null;
             } else {
                 $focusAppointment.remove();
@@ -186,7 +195,7 @@ $(document).ready(function() {
         data: {},
         success: function(results) {
             results.forEach(item => {
-                displayAppointment(item.area, item.day, item.hour, item.minute);
+                displayAppointment(item.area, item.day, item.hour, item.minute, item.water);
             });
             sortAppointments();
         }
@@ -199,8 +208,10 @@ $(document).ready(function() {
     });
 
     $('#close-form').click(function() {
-        $focusAppointment.find('#edit').css('background-color', '');
-        $focusAppointment = null;
+        if ($focusAppointment) {
+            $focusAppointment.find('#edit').css('background-color', '');
+            $focusAppointment = null;
+        }
         eraseForm();
         toggleForm();
     });
@@ -209,9 +220,11 @@ $(document).ready(function() {
         let day = $('#select-day').val();
         let rawHour = $('#text-hour').val();
         let rawMinute = $('#text-minute').val();
+        let rawWater = $('#text-water').val();
         hour = parseInt(rawHour);
         minute = parseInt(rawMinute);
-        if (isNaN(hour) || isNaN(minute) || hour < 0 || hour > 23 || minute < 0 || minute > 59 || hour.toString() !== rawHour || minute.toString() !== rawMinute) {
+        water = parseInt(rawWater);
+        if (isNaN(hour) || isNaN(minute) || hour < 0 || hour > 23 || minute < 0 || minute > 59 || hour.toString() !== rawHour || minute.toString() !== rawMinute || water < 0 || water.toString() !== rawWater) {
             eraseForm();
             toggleForm();
             console.log('aaa');
@@ -220,7 +233,7 @@ $(document).ready(function() {
         if ($focusAppointment !== null) {
             $focusAppointment.find('#edit').css('background-color', '');
             let area = $('#radio-area input:checked').val();
-            updateAppointment(area, day, hour, minute);
+            updateAppointment(area, day, hour, minute, water);
         } else {
             let areas = [];
             let flag = true;
@@ -243,7 +256,7 @@ $(document).ready(function() {
             }
             areas.forEach(area => {
                 days.forEach(day => {
-                    createAppointment(area, day, hour, minute);
+                    createAppointment(area, day, hour, minute, water);
                 })
             });
             sortAppointments();
