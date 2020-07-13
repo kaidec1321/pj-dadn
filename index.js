@@ -4,6 +4,7 @@ var bodyparser = require('body-parser');
 var multer = require('multer');
 var { schedule_Post, schedule_Put, schedule_Delete, schedule_Get } = require('./database/schedule.js');
 var {history_Get, history_Post} = require('./database/history.js');
+const { request } = require('http');
 var task = null;
 
 var app = express();
@@ -73,8 +74,20 @@ app.post('/pumping/submit-form', function(req, res) {
 app.get('/temphumi', (req, res) => {
     res.sendFile(__dirname + '/views/temphumi.html');
 });
+newsocket = express()
+var connect2TempHumi = require('http').createServer(newsocket)
+var io = require('socket.io')(connect2TempHumi);
+
+var tempHumiListener = mqtt.connect('http://localhost:1883')
+tempHumiListener.subscribe('Topic/TempHumi');
+tempHumiListener.on('message', function(topic, message) {
+    status = JSON.parse(message.toString())[0];
+    console.log(status)
+    // client.emit('update', status.values)
+})
 
 //View history
+
 app.get('/history', (req, res) => {
     res.sendFile(__dirname + '/views/history.html');
 });
@@ -179,9 +192,6 @@ app.post('/scheduling/put', (req, res) => {
 app.listen(3000);
 // Code tương tác iot
 var publisher = mqtt.connect('http://52.187.125.59', {username: 'BKvm', password: 'Hcmut_CSE_2020'});
-
-var tempHumiListener = mqtt.connect('http://52.187.125.59', {username: 'BKvm', password: 'Hcmut_CSE_2020'});
-
 
 // tempHumiListener.subscribe('Topic/TempHumi');
 // tempHumiListener.on('message', function(topic, message) {
