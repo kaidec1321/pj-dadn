@@ -58,6 +58,7 @@ app.post('/pumping/submit-form', function(req, res) {
                 console.log("Task created at " + startDate + " finished, stop pumping.")
             }, time2Pump*60000);
             res.status(200).send("success");
+            return;
         }
         if (req.body.type == "stop") {
             if (pumpState) {
@@ -69,6 +70,7 @@ app.post('/pumping/submit-form', function(req, res) {
                 res.status(200).send("success");
             }
             else res.status(200).send("fail");
+            return;
         }
         if (req.body.type == "force") {
             var message = JSON.stringify([{device_id:"Speaker",values:["1", req.body.intensity]}]);
@@ -90,8 +92,11 @@ app.post('/pumping/submit-form', function(req, res) {
                 console.log("Task created at " + startDate + " finished, stop pumping.")
             }, time2Pump*60000);
             res.status(200).send("success");
+            return;
         }
     }
+    else res.status(200).send('noarea');
+
 });
 
 
@@ -186,11 +191,9 @@ app.listen(3000);
 
 
 // Code tương tác iot
-var publisher = mqtt.connect('http://52.187.125.59', {username: 'BKvm', password: 'Hcmut_CSE_2020'});
-<<<<<<< HEAD
-=======
+var publisher = mqtt.connect('http://localhost:1883');
 
-var pumpListener = mqtt.connect('http://52.187.125.59', {username: 'BKvm', password: 'Hcmut_CSE_2020'});
+var pumpListener = mqtt.connect('http://localhost:1883');
 pumpListener.subscribe('Topic/Speaker');
 pumpListener.on('message', function(topic, message) {
     var status = JSON.parse(message.toString());
@@ -206,7 +209,7 @@ pumpListener.on('message', function(topic, message) {
 });
 
 
-var tempHumiListener = mqtt.connect('http://52.187.125.59', {username: 'BKvm', password: 'Hcmut_CSE_2020'});
+var tempHumiListener = mqtt.connect('http://localhost:1883');
 
 tempHumiListener.subscribe('Topic/TempHumi');
 tempHumiListener.on('message', function(topic, message) {
@@ -228,4 +231,3 @@ tempHumiListener.on('message', function(topic, message) {
     }
     
 });
->>>>>>> 728af26ec172cc90352e25b152f28f3e5b9e84f9

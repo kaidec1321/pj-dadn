@@ -63,7 +63,7 @@ $(document).ready(function() {
                             type: 'success'
                         });
                     }
-                    else {
+                    else if (result == "busy") {
                         $.notify('<strong>Bận!</strong> Máy bơm khu vực ' + area + ' đang hoạt động', {
                             type: 'danger'
                         });
@@ -73,6 +73,9 @@ $(document).ready(function() {
                             sendReq(data);
                             }
                         }, 1000);    
+                    }
+                    else {
+                        $.notify('<strong>Không thực hiện!</strong> Chưa trang bị máy bơm khu vực ' + area);
                     }
                 }
             });
@@ -105,8 +108,11 @@ $(document).ready(function() {
                             type: 'success'
                         });
                     }
-                    else {
+                    else if (result == "fail") {
                         var notify = $.notify('<strong>Không thực hiện!</strong> Máy bơm hiện không hoạt động!');
+                    }
+                    else {
+                        $.notify('<strong>Không thực hiện!</strong> Chưa trang bị máy bơm khu vực ' + area);
                     }
                 }
             })
