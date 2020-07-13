@@ -21,11 +21,16 @@ app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(upload.array());
 
+// Code tương tác iot
+var publisher = mqtt.connect('http://localhost:1883');
+var tempHumiListener = mqtt.connect('http://localhost:1883')
+var pumpListener = mqtt.connect('http://localhost:1883');
+
 app.get('/', (req, res) => {
-    res.redirect('/index');
+    res.redirect('/login');
 });
 
-app.get('/index', (req, res) => {
+app.get('/login', (req, res) => {
     res.sendFile(__dirname + '/views/login.html');
 });
 
@@ -122,18 +127,14 @@ app.post('/pumping/submit-form', function(req, res) {
 
 });
 
+//VIEW STATUS
 
-
-
-//View temphumi status
 app.get('/temphumi', (req, res) => {
     res.sendFile(__dirname + '/views/temphumi.html');
 });
     //default value for status
 status = ({device_id:"TempHumi",values:["0","0"]});
-    //connect to IOT server
-// var tempHumiListener = mqtt.connect('http://52.187.125.59', {username: 'BKvm', password: 'Hcmut_CSE_2020'});
-var tempHumiListener = mqtt.connect('http://localhost:1883')
+
 tempHumiListener.subscribe('Topic/TempHumi');
 tempHumiListener.on('message', function(topic, message) {
     status = JSON.parse(message.toString())[0];
@@ -210,13 +211,6 @@ app.post('/scheduling/put', (req, res) => {
 });
 
 
-app.listen(3000);
-
-
-// Code tương tác iot
-var publisher = mqtt.connect('http://localhost:1883');
-
-var pumpListener = mqtt.connect('http://localhost:1883');
 pumpListener.subscribe('Topic/Speaker');
 pumpListener.on('message', function(topic, message) {
     var status = JSON.parse(message.toString());
@@ -231,10 +225,6 @@ pumpListener.on('message', function(topic, message) {
     }   
 });
 
-
-var tempHumiListener = mqtt.connect('http://localhost:1883');
-
-tempHumiListener.subscribe('Topic/TempHumi');
 tempHumiListener.on('message', function(topic, message) {
     var status = JSON.parse(message.toString());
     console.log(status);
@@ -254,3 +244,6 @@ tempHumiListener.on('message', function(topic, message) {
     }
     
 });
+
+
+app.listen(3000);
