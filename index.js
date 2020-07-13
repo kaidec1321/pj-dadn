@@ -21,6 +21,10 @@ app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(upload.array());
 
+app.get('/', (req, res) => {
+    res.redirect('/index');
+});
+
 app.get('/index', (req, res) => {
     res.sendFile(__dirname + '/views/homepage.html');
 });
