@@ -24,11 +24,7 @@ pumpListener.on('message', function(topic, message) {
     }   
 });
 
-<<<<<<< HEAD
-tempHumiListener.subscribe('Topic/TempHumi');
-=======
 tempHumiListener.subscribe("Topic/TempHumi")
->>>>>>> 3cd070e1900e2d597399705bb678cbb1e355826b
 tempHumiListener.on('message', function(topic, message) {
     var status = JSON.parse(message.toString());
     console.log(status);
