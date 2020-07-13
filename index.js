@@ -64,26 +64,20 @@ app.post('/pumping/submit-form', function(req, res) {
                 res.status(200).send("busy");
                 return;
             }
-            var message = JSON.stringify([{device_id:"Speaker",values:["1", req.body.intensity]}]);
-            var topic = "Topic/Speaker";
-            publishPumpMessage(topic, message, parseInt(req.body.minutes));
+            publishPumpMessage("1", req.body.minutes, req.body.intensity);
             res.status(200).send("success");
             return;
         }
         if (req.body.type == "stop") {
             if (getPumpState()) {
-                var message = JSON.stringify([{device_id:"Speaker", values:["0","0"]}]);
-                var topic = "Topic/Speaker";
-                publishPumpMessage(topic, message);
+                publishPumpMessage("0");
                 res.status(200).send("success");
             }
             else res.status(200).send("fail");
             return;
         }
         if (req.body.type == "force") {
-            var message = JSON.stringify([{device_id:"Speaker",values:["1", req.body.intensity]}]);
-            var topic = "Topic/Speaker";
-            publishPumpMessage(topic, message, parseInt(req.body.minutes));
+            publishPumpMessage("1", req.body.minutes, req.body.intensity);
             console.log("Overwrite Task!");
             res.status(200).send("success");
             return;

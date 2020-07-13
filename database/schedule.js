@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const CronJob = require('cron').CronJob;
 mongoose.set('useFindAndModify', false);
+const { publishPumpMessage, getTempHumi, getPumpState } = require('../iot/iot.js');
 const { history_Get, history_Post } = require('./history.js');
 
 var dayInWeek = {
@@ -117,16 +118,9 @@ async function schedule_Post(doc, res = {}) {
                     let humidity = 0;
                     let luminosity = 0;
                     //Viết đoạn code chạy máy bơm, thời gian chạy tùy ý, t sẽ chỉnh cho người dùng chọn sau. 
+                    publishPumpMessage("1", doc.water, "150");//giá trị 150 là cường độ
                     //Viết đoạn code đọc độ ẩm và ánh sáng, lưu vào 2 biến humidity và luminosity
                     //lấy thời gian tưới do người dùng nhập vào qua doc.water 
-                    history_Post({
-                        _owner_id: mongoose.Types.ObjectId(),
-                        area: doc.area,
-                        luminosity: luminosity,
-                        humidity: humidity,
-                        water: 1000,
-                        date_time: date_time
-                    });
 
 
                     console.log('0 ' + doc.minute + ' ' + doc.hour + ' * * ' + dayInWeek[doc.day] + ' Cron jub runing...');
