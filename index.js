@@ -4,6 +4,7 @@ var bodyparser = require('body-parser');
 var multer = require('multer');
 var { schedule_Post, schedule_Put, schedule_Delete, schedule_Get } = require('./database/schedule.js');
 var task = null;
+var pumpState = false;
 
 var app = express();
 var upload = multer();
@@ -22,50 +23,75 @@ app.get('/index', (req, res) => {
 });
 
 //Pumping
-
 app.get('/pumping', (req, res) => {
     res.sendFile(__dirname + '/views/pumping.html');
 });
 
 app.post('/pumping/submit-form', function(req, res) {
     console.log(req.body);
-    if (req.body.type == "BƠM NƯỚC NGAY") {
-        var message = JSON.stringify([{device_id:"Speaker",values:["1", req.body.intensity]}]);
-        var startDate = new Date();
-        var topic = "Topic/Speaker";
-        publisher.publish(topic, message);
-        console.log("Message: " + message + " sent to " + topic + " at " + startDate);
-        var time2Pump = parseInt(req.body.minutes);
-        if (task != null) {
-            clearTimeout(task); 
-            task = null;
-        }
-        task = setTimeout(() => {
-            var message = JSON.stringify([{device_id:"Speaker", values:["0","0"]}]);
+    if (req.body.area == "1") {
+        if (req.body.type == "start") {
+            if (pumpState) {
+                res.status(200).send("busy");
+                return;
+            }
+            pumpState = true;
+            var message = JSON.stringify([{device_id:"Speaker",values:["1", req.body.intensity]}]);
+            var startDate = new Date();
             var topic = "Topic/Speaker";
-            var endDate = new Date();
             publisher.publish(topic, message);
-            console.log("Message: " + message + " sent to " + topic + " at " + endDate);
-            console.log("Task created at " + startDate + " finished, stop pumping.")
-        }, time2Pump*60000)
+            console.log("Message: " + message + " sent to " + topic + " at " + startDate);
+            var time2Pump = parseInt(req.body.minutes);
+            if (task != null) {
+                clearTimeout(task); 
+                task = null;
+            }
+            task = setTimeout(() => {
+                var message = JSON.stringify([{device_id:"Speaker", values:["0","0"]}]);
+                var topic = "Topic/Speaker";
+                var endDate = new Date();
+                publisher.publish(topic, message);
+                console.log("Message: " + message + " sent to " + topic + " at " + endDate);
+                console.log("Task created at " + startDate + " finished, stop pumping.")
+            }, time2Pump*60000);
+            res.status(200).send("success");
+        }
+        if (req.body.type == "stop") {
+            if (pumpState) {
+                pumpState = false;
+                var message = JSON.stringify([{device_id:"Speaker", values:["0","0"]}]);
+                var topic = "Topic/Speaker";
+                publisher.publish(topic, message);
+                console.log("Message: " + message + " sent to " + topic);
+                res.status(200).send("success");
+            }
+            else res.status(200).send("fail");
+        }
+        if (req.body.type == "force") {
+            var message = JSON.stringify([{device_id:"Speaker",values:["1", req.body.intensity]}]);
+            var startDate = new Date();
+            var topic = "Topic/Speaker";
+            publisher.publish(topic, message);
+            console.log("Message: " + message + " sent to " + topic + " at " + startDate + " - Overwrite Task!");
+            var time2Pump = parseInt(req.body.minutes);
+            if (task != null) {
+                clearTimeout(task); 
+                task = null;
+            }
+            task = setTimeout(() => {
+                var message = JSON.stringify([{device_id:"Speaker", values:["0","0"]}]);
+                var topic = "Topic/Speaker";
+                var endDate = new Date();
+                publisher.publish(topic, message);
+                console.log("Message: " + message + " sent to " + topic + " at " + endDate);
+                console.log("Task created at " + startDate + " finished, stop pumping.")
+            }, time2Pump*60000);
+            res.status(200).send("success");
+        }
     }
-    if (req.body.type == "DỪNG BƠM") {
-        var message = JSON.stringify([{device_id:"Speaker", values:["0","0"]}]);
-        var topic = "Topic/Speaker";
-        publisher.publish(topic, message);
-        console.log("Message: " + message + " sent to " + topic);
-    }
-    res.sendFile(__dirname+'/views/successful.html');
-    
-    // var iot = mqttClient.connect('tcp://13.76.250.158:1883', {username: 'BKvm2', password: 'Hcmut_CSE_2020'});
-    // iot.subscribe("Topic/Speaker");
-    // iot.on('message', function(topic, message) {
-    //     status = JSON.parse(message.toString())[0];
-    //     // console.log(status);
-    //     client.emit('message', status.values);
-    // })
-    // iot.end();
 });
+
+
 
 
 //View temphumi status
@@ -165,22 +191,46 @@ app.post('/scheduling/put', (req, res) => {
 
 
 app.listen(3000);
+
+
 // Code tương tác iot
 var publisher = mqtt.connect('http://52.187.125.59', {username: 'BKvm', password: 'Hcmut_CSE_2020'});
 
+var pumpListener = mqtt.connect('http://52.187.125.59', {username: 'BKvm', password: 'Hcmut_CSE_2020'});
+pumpListener.subscribe('Topic/Speaker');
+pumpListener.on('message', function(topic, message) {
+    var status = JSON.parse(message.toString());
+    console.log(status);
+    try {
+        var currentState = Number(status[0].values[0]);
+        if (currentState == "0") {
+            pumpState = false;
+        } else pumpState = true;
+    } catch {
+        console.log("REJECTED - Wrong data format!")
+    }   
+});
+
+
 var tempHumiListener = mqtt.connect('http://52.187.125.59', {username: 'BKvm', password: 'Hcmut_CSE_2020'});
 
-
-// tempHumiListener.subscribe('Topic/TempHumi');
-// tempHumiListener.on('message', function(topic, message) {
-//     var status = JSON.parse(message.toString());
-//     console.log(status);
-//     var temp = Number(status[0].values[0]);
-//     var humi = Number(status[0].values[1]); 
-//     if (humi < 20 && temp > 30) {
-//         console.log('Temperature: ' + status[0].values[0] + ' - Humidity: ' + status[0].values[1] + ' - AUTO START MOTOR');
-//         var message = JSON.stringify([{device_id: 'Speaker', values: ['1', '150']}]);
-//         iot2.publish('Topic/Speaker', message);
-//         console.log("Message: " + message + " auto sent to Topic/Speaker");
-//     }
-// });
+tempHumiListener.subscribe('Topic/TempHumi');
+tempHumiListener.on('message', function(topic, message) {
+    var status = JSON.parse(message.toString());
+    console.log(status);
+    try {
+        var temp = Number(status[0].values[0]);
+        var humi = Number(status[0].values[1]); 
+        //Check humidity, temperature and auto-pump if the conditions - decided by the team, are satisfied  
+        if (humi < 20 && temp > 30) {
+            console.log('Temperature: ' + status[0].values[0] + ' - Humidity: ' + status[0].values[1] + ' - AUTO START MOTOR');
+            var message = JSON.stringify([{device_id: 'Speaker', values: ['1', '150']}]);
+            iot2.publish('Topic/Speaker', message);
+            console.log("Message: " + message + " auto sent to Topic/Speaker");
+        }
+    }
+    catch {
+        console.log("REJECTED - Wrong data format!")
+    }
+    
+});
