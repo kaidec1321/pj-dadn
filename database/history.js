@@ -35,18 +35,52 @@ var historySchema = mongoose.Schema({
 
 var history = mongoose.model('history', historySchema);
 
-async function history_Get(res, _owner_id = '') {
+// async function history_Get(res) {
+// // async function history_Get(res, _owner_id = '') {
+//     // res là response object
+//     // _owner_id là id của chủ vườn
+//     // gọi hàm này sẽ render tới client lịch sử tưới cây của chủ vườn.
+
+//     // const prm = await history.findById(_owner_id).sort({
+//     //     date_time: 1,
+//     //     area: 1
+//     // })
+//     const prm = await history.find({}).sort({
+//         date_time: 1,
+//         area: 1,
+//     })
+//     if ('send' in res) {
+//         res.send(JSON.stringify(prm));
+//     }
+// }
+
+async function history_Get(doc, res) {
+    // doc là 1 đối tượng
+    //doc={
+    //    day:Number,
+    //    month:Number,
+    //    year:Number
+    //}
     // res là response object
     // _owner_id là id của chủ vườn
     // gọi hàm này sẽ render tới client lịch sử tưới cây của chủ vườn.
-    const prm = await history.findById(_owner_id).sort({
+    const prm = await history.find({
+        date_time: {
+            $gte: new Date(doc.year, doc.month - 1, doc.day),
+            $lt: new Date(doc.year, doc.month - 1, doc.day + 1)
+        }
+    }).sort({
         date_time: 1,
         area: 1
     })
+    // console.log(doc)
     if ('send' in res) {
         res.send(JSON.stringify(prm));
     }
 }
+
+
+
 
 async function history_Post(doc, res = {}) {
     /* 

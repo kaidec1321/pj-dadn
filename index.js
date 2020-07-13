@@ -106,16 +106,21 @@ app.get('/history', (req, res) => {
     res.sendFile(__dirname + '/views/history.html');
 });
 
-app.post('/history/post', (req, res) => {
-    let { hour, area, light, humidity, amount } = req.body;
-    schedule_Post({
-        hour: hour,
-        area: parseInt(area),
-        light: light,
-        humidity: humidity,
-        amount: amount,
-    }, res);
+app.get('/history/get', (req, res) => {
+    history_Get({day: 14, month: 7, year: 2020},res);
 });
+
+// app.post('/history/post', (req, res) => {
+//     let { date_time, area, luminosity, humidity, water } = req.body;
+//     console.log(hour);
+//     history_Post({
+//         date_time: date_time,
+//         area: parseInt(area),
+//         luminosity: luminosity,
+//         humidity: humidity,
+//         water: water
+//     }, res);
+// });
 
 //Scheduling
 app.get('/scheduling', (req, res) => {
