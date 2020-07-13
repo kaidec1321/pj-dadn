@@ -1,0 +1,31 @@
+﻿
+
+* {
+    font-size: 20px;
+    font-family: Arial;
+}
+.container-fluid{
+    padding-bottom: 40px;
+}
+.box {
+    border: 3px solid #222060;
+    width: 500px;
+    height: 350px;
+    margin: 100px auto;
+    margin-top: 40px;
+    background: #ebebeb;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    text-align: center;
+}
+.avatar{
+    height: 200px;
+    width: 200px;
+    text-align: center;
+    }
+.details{
+    color: #222060;
+    font-family: 'Segoe UI';
+    text-align: left;
+}
+

@@ -26,6 +26,25 @@ app.get('/', (req, res) => {
 });
 
 app.get('/index', (req, res) => {
+    res.sendFile(__dirname + '/views/login.html');
+});
+
+app.post('/homepage', function(req, res) {
+    console.log(req.body);
+    if (req.body.btnLogin == "Đăng nhập") {
+        var username = req.body.username;
+        var password = req.body.password;
+        if (username == "") {
+            //
+        }
+        else if (password == ""){
+            // alert("Bạn chưa nhập mật khẩu!");
+        }
+    } 
+    res.sendFile(__dirname+'/views/homepage.html');
+});
+
+app.get('/homepage', (req, res) => {
     res.sendFile(__dirname + '/views/homepage.html');
 });
 
@@ -133,7 +152,7 @@ app.get('/history', (req, res) => {
     res.sendFile(__dirname + '/views/history.html');
 });
 
-app.post('/scheduling/post', (req, res) => {
+app.post('/history/post', (req, res) => {
     let { hour, area, light, humidity, amount } = req.body;
     schedule_Post({
         hour: hour,
