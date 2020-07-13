@@ -98,19 +98,20 @@ async function schedule_Post(doc, res = {}) {
             job[created_doc._id] = new CronJob({
                 cronTime: '0 ' + doc.minute + ' ' + doc.hour + ' * * ' + dayInWeek[doc.day], // Chạy Jobs vào thời điểm đã hẹn
                 onTick: function() {
-                    //Làm gì đó đi
                     let date_time = Date.now();
+                    let humidity = 0;
+                    let luminosity = 0;
+                    //Viết đoạn code chạy máy bơm, thời gian chạy tùy ý, t sẽ chỉnh cho người dùng chọn sau. 
+                    //Viết đoạn code đọc độ ẩm và ánh sáng, lưu vào 2 biến humidity và luminosity 
                     history_Post({
                         _owner_id: mongoose.Types.ObjectId(),
                         area: doc.area,
-                        luminosity: 1000,
-                        humidity: 1000,
+                        luminosity: luminosity,
+                        humidity: humidity,
                         water: 1000,
                         date_time: date_time
                     });
-                    // Khởi động máy bơm
-                    //await Pumb();
-                    //
+
 
                     console.log('0 ' + doc.minute + ' ' + doc.hour + ' * * ' + dayInWeek[doc.day] + ' Cron jub runing...');
                 },
