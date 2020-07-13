@@ -47,6 +47,16 @@ var scheduleSchema = mongoose.Schema({
             message: 'Giá trị phút không hợp lệ.'
         }
     },
+    water: {
+        type: Number,
+        required: true,
+        validate: {
+            validator: function(water) {
+                return water > 0;
+            },
+            message: "Giá trị lượng nước tưới không hợp lệ."
+        }
+    },
     area: {
         type: Number,
         required: true,
@@ -73,7 +83,12 @@ async function schedule_Post(doc, res = {}) {
     } 
     
     res là một đối tượng Response*/
-    await schedule.find(doc).exec(function(err, docs) {
+    await schedule.find({
+        day: doc.day,
+        hour: doc.hour,
+        minute: doc.minute,
+        area: doc.area
+    }).exec(function(err, docs) {
         if (err) {
             if ('send' in res) {
                 console.log(err.message);
@@ -102,7 +117,8 @@ async function schedule_Post(doc, res = {}) {
                     let humidity = 0;
                     let luminosity = 0;
                     //Viết đoạn code chạy máy bơm, thời gian chạy tùy ý, t sẽ chỉnh cho người dùng chọn sau. 
-                    //Viết đoạn code đọc độ ẩm và ánh sáng, lưu vào 2 biến humidity và luminosity 
+                    //Viết đoạn code đọc độ ẩm và ánh sáng, lưu vào 2 biến humidity và luminosity
+                    //lấy thời gian tưới do người dùng nhập vào qua doc.water 
                     history_Post({
                         _owner_id: mongoose.Types.ObjectId(),
                         area: doc.area,
