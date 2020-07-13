@@ -22,6 +22,7 @@ pumpListener.on('message', function(topic, message) {
     }   
 });
 
+tempHumiListener.subscribe("Topic/TempHumi")
 tempHumiListener.on('message', function(topic, message) {
     var status = JSON.parse(message.toString());
     console.log(status);

@@ -98,19 +98,12 @@ app.post('/pumping/submit-form', function(req, res) {
 app.get('/temphumi', (req, res) => {
     res.sendFile(__dirname + '/views/temphumi.html');
 });
-    //default value for status
-status = ({device_id:"TempHumi",values:["0","0"]});
-
-// tempHumiListener.subscribe('Topic/TempHumi');
-// tempHumiListener.on('message', function(topic, message) {
-//     status = JSON.parse(message.toString())[0];
-//     // console.log(status)
-//     // client.emit('update', status.values)
-// })
 
 app.get("/data", (req, res) => {
     // console.log('requesting data')
-    res.send(status.values)
+    status = getTempHumi();
+    // console.log(status)
+    res.send(status)
 })
 
 //View history
