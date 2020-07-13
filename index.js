@@ -174,12 +174,13 @@ app.get('/scheduling/get', (req, res) => {
 });
 
 app.post('/scheduling/post', (req, res) => {
-    let { area, day, hour, minute } = req.body;
+    let { area, day, hour, minute, water } = req.body;
     schedule_Post({
         area: parseInt(area),
         day: day,
         hour: parseInt(hour),
         minute: parseInt(minute),
+        water: parseInt(water)
     }, res);
 });
 
@@ -195,7 +196,7 @@ app.post('/scheduling/delete', (req, res) => {
 
 app.post('/scheduling/put', (req, res) => {
     let { oldArea, oldDay, oldHour, oldMinute } = req.body;
-    let { area, day, hour, minute } = req.body;
+    let { area, day, hour, minute, water } = req.body;
     schedule_Put({
         area: parseInt(oldArea),
         day: oldDay,
@@ -206,6 +207,7 @@ app.post('/scheduling/put', (req, res) => {
         day: day,
         hour: parseInt(hour),
         minute: parseInt(minute),
+        water: parseInt(water)
     }, res)
 
 });
