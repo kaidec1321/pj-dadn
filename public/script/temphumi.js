@@ -1,3 +1,4 @@
+fetchMostRecentData()
 function fetchMostRecentData() {
 	fetch("/data")
 	.then(response => response.json())

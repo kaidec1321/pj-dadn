@@ -137,7 +137,7 @@ var tempHumiListener = mqtt.connect('http://localhost:1883')
 tempHumiListener.subscribe('Topic/TempHumi');
 tempHumiListener.on('message', function(topic, message) {
     status = JSON.parse(message.toString())[0];
-    console.log(status)
+    // console.log(status)
     // client.emit('update', status.values)
 })
 
