@@ -2,6 +2,7 @@
 <html>
     <head>
         <title>Xem Trạng Thái</title>
+        <link rel="icon" type="image/png" href="/image/icons/smart-farm.png"/>
         <meta charset="utf-8"/>
         <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
@@ -71,7 +72,7 @@
         <table class="table-status" id="table-status">
             <tr>
                 <th>Khu vực</th>
-                <th>Ánh sáng</th>
+                <th>Nhiệt độ</th>
                 <th>Độ ẩm</th>
             </tr>
             <p id="result"></p>
@@ -82,9 +83,9 @@
             </tr>
         </table>
         <br>
-        <form id= "update" class="update">
+        <!-- <form id= "update" class="update">
             <input type="submit" value= "CẬP NHẬT" />
-        </form>
+        </form> -->
         <ul id="thread"></ul>
         <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 		<script src="/socket.io/socket.io.js"></script>

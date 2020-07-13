@@ -3,6 +3,8 @@ var mqtt = require('mqtt');
 var bodyparser = require('body-parser');
 var multer = require('multer');
 var { schedule_Post, schedule_Put, schedule_Delete, schedule_Get } = require('./database/schedule.js');
+var {history_Get, history_Post} = require('./database/history.js');
+const { request } = require('http');
 var task = null;
 var pumpState = false;
 
@@ -98,10 +100,33 @@ app.post('/pumping/submit-form', function(req, res) {
 app.get('/temphumi', (req, res) => {
     res.sendFile(__dirname + '/views/temphumi.html');
 });
+newsocket = express()
+var connect2TempHumi = require('http').createServer(newsocket)
+var io = require('socket.io')(connect2TempHumi);
+
+var tempHumiListener = mqtt.connect('http://localhost:1883')
+tempHumiListener.subscribe('Topic/TempHumi');
+tempHumiListener.on('message', function(topic, message) {
+    status = JSON.parse(message.toString())[0];
+    console.log(status)
+    // client.emit('update', status.values)
+})
 
 //View history
+
 app.get('/history', (req, res) => {
     res.sendFile(__dirname + '/views/history.html');
+});
+
+app.post('/scheduling/post', (req, res) => {
+    let { hour, area, light, humidity, amount } = req.body;
+    schedule_Post({
+        hour: hour,
+        area: parseInt(area),
+        light: light,
+        humidity: humidity,
+        amount: amount,
+    }, res);
 });
 
 // var io = require('socket.io')(webserver)
