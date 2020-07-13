@@ -43,8 +43,8 @@ label {
 }
 
 .tophead img {
-  width: 240px;
-  height: 240px;
+  width: 200px;
+  height: 200px;
   transition: transform .2s;
 }
 

@@ -3,7 +3,8 @@ var mqtt = require('mqtt');
 var bodyparser = require('body-parser');
 var multer = require('multer');
 var { schedule_Post, schedule_Put, schedule_Delete, schedule_Get } = require('./database/schedule.js');
-var {history_Get, history_Post} = require('./database/history.js');
+var { history_Get, history_Post } = require('./database/history.js');
+var { publishPumpMessage, getTempHumi, getPumpState } = require('./iot/iot.js');
 const { request } = require('http');
 const { Db } = require('mongodb');
 var task = null;
@@ -21,7 +22,13 @@ app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(upload.array());
 
-app.get('/index', (req, res) => {
+// Code tương tác iot
+
+app.get('/', (req, res) => {
+    res.redirect('/login');
+});
+
+app.get('/login', (req, res) => {
     res.sendFile(__dirname + '/views/login.html');
 });
 
@@ -53,39 +60,21 @@ app.post('/pumping/submit-form', function(req, res) {
     console.log(req.body);
     if (req.body.area == "1") {
         if (req.body.type == "start") {
-            if (pumpState) {
+            if (getPumpState()) {
                 res.status(200).send("busy");
                 return;
             }
-            pumpState = true;
             var message = JSON.stringify([{device_id:"Speaker",values:["1", req.body.intensity]}]);
-            var startDate = new Date();
             var topic = "Topic/Speaker";
-            publisher.publish(topic, message);
-            console.log("Message: " + message + " sent to " + topic + " at " + startDate);
-            var time2Pump = parseInt(req.body.minutes);
-            if (task != null) {
-                clearTimeout(task); 
-                task = null;
-            }
-            task = setTimeout(() => {
-                var message = JSON.stringify([{device_id:"Speaker", values:["0","0"]}]);
-                var topic = "Topic/Speaker";
-                var endDate = new Date();
-                publisher.publish(topic, message);
-                console.log("Message: " + message + " sent to " + topic + " at " + endDate);
-                console.log("Task created at " + startDate + " finished, stop pumping.")
-            }, time2Pump*60000);
+            publishPumpMessage(topic, message, parseInt(req.body.minutes));
             res.status(200).send("success");
             return;
         }
         if (req.body.type == "stop") {
-            if (pumpState) {
-                pumpState = false;
+            if (getPumpState()) {
                 var message = JSON.stringify([{device_id:"Speaker", values:["0","0"]}]);
                 var topic = "Topic/Speaker";
-                publisher.publish(topic, message);
-                console.log("Message: " + message + " sent to " + topic);
+                publishPumpMessage(topic, message);
                 res.status(200).send("success");
             }
             else res.status(200).send("fail");
@@ -93,23 +82,9 @@ app.post('/pumping/submit-form', function(req, res) {
         }
         if (req.body.type == "force") {
             var message = JSON.stringify([{device_id:"Speaker",values:["1", req.body.intensity]}]);
-            var startDate = new Date();
             var topic = "Topic/Speaker";
-            publisher.publish(topic, message);
-            console.log("Message: " + message + " sent to " + topic + " at " + startDate + " - Overwrite Task!");
-            var time2Pump = parseInt(req.body.minutes);
-            if (task != null) {
-                clearTimeout(task); 
-                task = null;
-            }
-            task = setTimeout(() => {
-                var message = JSON.stringify([{device_id:"Speaker", values:["0","0"]}]);
-                var topic = "Topic/Speaker";
-                var endDate = new Date();
-                publisher.publish(topic, message);
-                console.log("Message: " + message + " sent to " + topic + " at " + endDate);
-                console.log("Task created at " + startDate + " finished, stop pumping.")
-            }, time2Pump*60000);
+            publishPumpMessage(topic, message, parseInt(req.body.minutes));
+            console.log("Overwrite Task!");
             res.status(200).send("success");
             return;
         }
@@ -118,28 +93,17 @@ app.post('/pumping/submit-form', function(req, res) {
 
 });
 
+//VIEW STATUS
 
-
-
-//View temphumi status
 app.get('/temphumi', (req, res) => {
     res.sendFile(__dirname + '/views/temphumi.html');
 });
-    //default value for status
-status = ({device_id:"TempHumi",values:["0","0"]});
-    //connect to IOT server
-// var tempHumiListener = mqtt.connect('http://52.187.125.59', {username: 'BKvm', password: 'Hcmut_CSE_2020'});
-var tempHumiListener = mqtt.connect('http://localhost:1883')
-tempHumiListener.subscribe('Topic/TempHumi');
-tempHumiListener.on('message', function(topic, message) {
-    status = JSON.parse(message.toString())[0];
-    console.log(status)
-    // client.emit('update', status.values)
-})
 
 app.get("/data", (req, res) => {
     // console.log('requesting data')
-    res.send(status.values)
+    status = getTempHumi();
+    // console.log(status)
+    res.send(status)
 })
 
 //View history
@@ -169,12 +133,13 @@ app.get('/scheduling/get', (req, res) => {
 });
 
 app.post('/scheduling/post', (req, res) => {
-    let { area, day, hour, minute } = req.body;
+    let { area, day, hour, minute, water } = req.body;
     schedule_Post({
         area: parseInt(area),
         day: day,
         hour: parseInt(hour),
         minute: parseInt(minute),
+        water: parseInt(water)
     }, res);
 });
 
@@ -190,7 +155,7 @@ app.post('/scheduling/delete', (req, res) => {
 
 app.post('/scheduling/put', (req, res) => {
     let { oldArea, oldDay, oldHour, oldMinute } = req.body;
-    let { area, day, hour, minute } = req.body;
+    let { area, day, hour, minute, water } = req.body;
     schedule_Put({
         area: parseInt(oldArea),
         day: oldDay,
@@ -201,52 +166,11 @@ app.post('/scheduling/put', (req, res) => {
         day: day,
         hour: parseInt(hour),
         minute: parseInt(minute),
+        water: parseInt(water)
     }, res)
 
 });
 
 
+
 app.listen(3000);
-
-
-// Code tương tác iot
-var publisher = mqtt.connect('http://localhost:1883');
-
-var pumpListener = mqtt.connect('http://localhost:1883');
-pumpListener.subscribe('Topic/Speaker');
-pumpListener.on('message', function(topic, message) {
-    var status = JSON.parse(message.toString());
-    console.log(status);
-    try {
-        var currentState = Number(status[0].values[0]);
-        if (currentState == "0") {
-            pumpState = false;
-        } else pumpState = true;
-    } catch {
-        console.log("REJECTED - Wrong data format!")
-    }   
-});
-
-
-var tempHumiListener = mqtt.connect('http://localhost:1883');
-
-tempHumiListener.subscribe('Topic/TempHumi');
-tempHumiListener.on('message', function(topic, message) {
-    var status = JSON.parse(message.toString());
-    console.log(status);
-    try {
-        var temp = Number(status[0].values[0]);
-        var humi = Number(status[0].values[1]); 
-        //Check humidity, temperature and auto-pump if the conditions - decided by the team, are satisfied  
-        if (humi < 20 && temp > 30) {
-            console.log('Temperature: ' + status[0].values[0] + ' - Humidity: ' + status[0].values[1] + ' - AUTO START MOTOR');
-            var message = JSON.stringify([{device_id: 'Speaker', values: ['1', '150']}]);
-            iot2.publish('Topic/Speaker', message);
-            console.log("Message: " + message + " auto sent to Topic/Speaker");
-        }
-    }
-    catch {
-        console.log("REJECTED - Wrong data format!")
-    }
-    
-});
