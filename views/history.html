@@ -20,7 +20,6 @@
 	<link rel="stylesheet" type="text/css" href="/css/utilHistory.css">
 	<link rel="stylesheet" type="text/css" href="/css/mainHistory.css">
 <!--===============================================================================================-->
-</head>
 <body>
 	<header>
 		
@@ -30,16 +29,23 @@
 			<a href="#"><img class="avt" src="/image/user.png" alt="logo"></a>
 			<H2><span style="font-family: Segoe Script">Lịch sử</span> <img src="/image/history.png" alt="logo"></H2>
 			
-			<input class="day" type="date" data-date-inline-picker="true"/>
+			<!-- <input id = "datepicker" class="day" type="date" data-date-inline-picker="true"/> -->
+			<!-- <div id="datepicker"></div> -->
+			<!-- <form class="box" action="/history/get" method="POST" id = "my-form"> -->
+			<input class="day" type="date" id="date-input" required />
+			<button id="submit">Submit</button>
+			<!-- </form> -->
+			<!-- <input type="text" name='something' value="thevalue" /> -->
         </nav>
-    </header>
+	</header>
+	<section class="about">
 	<div class="limiter">
 		<div class="container-table100">
 			<div class="wrap-table100">
 				<div class="table100">
 					<table id='appointments'>
 						<thead>
-							<tr class="table100-head">
+							<tr class="table100-head" class="table table-hover">
 								<th class="column1">Giờ</th>
 								<th class="column2">Khu vực</th>
 								<th class="column3">Ánh sáng</th>
@@ -71,7 +77,7 @@
 			</div>
 		</div>
 	</div>
-
+</section>
 
 	
 

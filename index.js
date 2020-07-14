@@ -106,9 +106,12 @@ app.get('/history', (req, res) => {
     res.sendFile(__dirname + '/views/history.html');
 });
 
-app.get('/history/get', (req, res) => {
-    history_Get({day: 14, month: 7, year: 2020},res);
+app.post('/history/get', (req, res) => {
+    console.log(req.body);
+    let {day, month, year}=req.body;
+    history_Get({day: day, month: month, year: year},res);
 });
+
 
 // app.post('/history/post', (req, res) => {
 //     let { date_time, area, luminosity, humidity, water } = req.body;
