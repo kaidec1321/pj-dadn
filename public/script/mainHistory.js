@@ -36,7 +36,8 @@ function displayAppointment(date_time, area, luminosity, humidity, water) {
         data: {day: day, month: month, year: year},
         
         success: function(results) {
-            console.log(results);
+            console.log(results);    
+            $("#appointments").find("tr:gt(1)").remove();
             results.forEach(item => {
                 displayAppointment(item.date_time, item.area, item.luminosity, item.humidity, item.water);
             });
