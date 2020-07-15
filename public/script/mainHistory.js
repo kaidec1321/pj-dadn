@@ -37,7 +37,7 @@ function displayAppointment(date_time, area, luminosity, humidity, water) {
 
 $(document).ready(function() {
     document.getElementById("date-input").valueAsDate = new Date();
-    alert($("#date-input").val());
+    // alert($("#date-input").val());
     loadHistory();
 });
 
