@@ -1,14 +1,15 @@
 var mqtt = require('mqtt');
 const mongoose = require('mongoose');
+const address = "http://localhost:1883";
 var pumpState = false;
 var humidity = 0;
 var temperature = 0;
 var task = null;
 const { history_Get, history_Post } = require('../database/history.js');
 
-var publisher = mqtt.connect('http://localhost:1883');
-var tempHumiListener = mqtt.connect('http://localhost:1883')
-var pumpListener = mqtt.connect('http://localhost:1883');
+var publisher = mqtt.connect(address);
+var tempHumiListener = mqtt.connect(address);
+var pumpListener = mqtt.connect(address);
 
 pumpListener.subscribe('Topic/Speaker');
 pumpListener.on('message', function(topic, message) {
@@ -36,7 +37,7 @@ tempHumiListener.on('message', function(topic, message) {
             console.log('Temperature: ' + status[0].values[0] + ' - Humidity: ' + status[0].values[1] + ' - AUTO START MOTOR');
             // var message = JSON.stringify([{device_id: 'Speaker', values: ['1', '150']}]);
             // publisher.publish('Topic/Speaker', message);
-            publishPumpMessage(1, 2, "150", "1")
+            publishPumpMessage("1", 10, "150", "1")
             // console.log("Message: " + message + " auto sent to Topic/Speaker");
         }
     }

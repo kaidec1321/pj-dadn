@@ -123,7 +123,7 @@ async function schedule_Post(doc, res = {}) {
                     //lấy thời gian tưới do người dùng nhập vào qua doc.water 
 
 
-                    console.log('0 ' + doc.minute + ' ' + doc.hour + ' * * ' + dayInWeek[doc.day] + ' Cron jub runing...');
+                    console.log('0 ' + doc.minute + ' ' + doc.hour + ' * * ' + dayInWeek[doc.day] + ' Cron job runing...');
                 },
                 start: true,
                 timeZone: 'Asia/Ho_Chi_Minh' // Lưu ý set lại time zone cho đúng 
@@ -179,6 +179,22 @@ async function schedule_Get(res) {
         res.send(JSON.stringify(prm));
     }
 }
+
+schedule.find({}).exec((err, docs) => {
+    if (err) throw err;
+    docs.forEach((doc, index) => {
+        job[doc._id] = new CronJob({
+            cronTime: '0 ' + doc.minute + ' ' + doc.hour + ' * * ' + dayInWeek[doc.day], // Chạy Jobs vào thời điểm đã hẹn
+            onTick: function() {
+                publishPumpMessage("1", doc.water, "150");
+                console.log('0 ' + doc.minute + ' ' + doc.hour + ' * * ' + dayInWeek[doc.day] + ' Cron job runing...');
+            },
+            start: true,
+            timeZone: 'Asia/Ho_Chi_Minh' // Lưu ý set lại time zone cho đúng 
+        });
+        job[doc._id].start();
+    })
+})
 
 module.exports = {
     schedule_Post: schedule_Post,
