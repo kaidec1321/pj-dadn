@@ -1,6 +1,8 @@
 var mqtt = require('mqtt');
 const mongoose = require('mongoose');
 const address = "http://localhost:1883";
+var startPump = null;
+var intensityPump = 0;
 var pumpState = false;
 var humidity = 0;
 var temperature = 0;
@@ -37,7 +39,7 @@ tempHumiListener.on('message', function(topic, message) {
             console.log('Temperature: ' + status[0].values[0] + ' - Humidity: ' + status[0].values[1] + ' - AUTO START MOTOR');
             // var message = JSON.stringify([{device_id: 'Speaker', values: ['1', '150']}]);
             // publisher.publish('Topic/Speaker', message);
-            publishPumpMessage("1", 10, "150", "1")
+            publishPumpMessage("1", "10", "150", "1");
             // console.log("Message: " + message + " auto sent to Topic/Speaker");
         }
     }
@@ -53,6 +55,8 @@ function publishPumpMessage(mode, pumpTime=null, intensity="0", area="1") {
     publisher.publish(topic, message);
     console.log("Message: " + message + " sent to " + topic + " at " + startDate);
     if (pumpTime) {
+        startPump = Date.now();
+        intensityPump = parseInt(intensity);
         if (task != null) {
             clearTimeout(task); 
             task = null;
@@ -63,6 +67,7 @@ function publishPumpMessage(mode, pumpTime=null, intensity="0", area="1") {
         }, parseInt(pumpTime)*60000);
     }
     else {
+        var endPump = Date.now();
         if (task != null) {
             clearTimeout(task); 
             task = null;
@@ -72,8 +77,8 @@ function publishPumpMessage(mode, pumpTime=null, intensity="0", area="1") {
             area: area,
             luminosity: temperature,
             humidity: humidity,
-            water: 1000,
-            date_time: Date.now()
+            water: intensityPump*(endPump - startPump)/1000,
+            date_time: endPump
         });
     }
 }
