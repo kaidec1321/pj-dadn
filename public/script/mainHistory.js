@@ -38,7 +38,7 @@ function displayAppointment(date_time, area, luminosity, humidity, water) {
         success: function(results) {   
             $("#appointments").find("tr:gt(1)").remove();
             results.forEach(item => {
-                alert(item.date_time);
+                // alert(item.date_time);
                 displayAppointment(item.date_time, item.area, item.luminosity, item.humidity, item.water);
             });
         }
