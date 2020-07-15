@@ -109,7 +109,7 @@ app.get('/history', (req, res) => {
 app.post('/history/get', (req, res) => {
     console.log(req.body);
     let {day, month, year}=req.body;
-    history_Get({day: day, month: month, year: year},res);
+    history_Get({day: parseInt(day), month: parseInt(month), year: parseInt(year)},res);
 });
 
 

@@ -73,7 +73,6 @@ async function history_Get(doc, res) {
         date_time: 1,
         area: 1
     })
-    // console.log(doc)
     
     if ('send' in res) {
         res.send(JSON.stringify(prm));

@@ -9,7 +9,7 @@ function displayAppointment(date_time, area, luminosity, humidity, water) {
     $appointment.find('#luminosity').text(luminosity);
     $appointment.find('#humidity').text(humidity);
     $appointment.find('#water').text(water);
-    $('#appointments tbody').append($appointment);
+    $('#tbodyid').append($appointment);
     
 };
 
@@ -35,10 +35,10 @@ function displayAppointment(date_time, area, luminosity, humidity, water) {
         dataType: 'json',
         data: {day: day, month: month, year: year},
         
-        success: function(results) {
-            console.log(results);    
+        success: function(results) {   
             $("#appointments").find("tr:gt(1)").remove();
             results.forEach(item => {
+                alert(item.date_time);
                 displayAppointment(item.date_time, item.area, item.luminosity, item.humidity, item.water);
             });
         }
