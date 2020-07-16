@@ -77,7 +77,7 @@ function publishPumpMessage(mode, pumpTime=null, intensity="0", area="1") {
             area: area,
             luminosity: temperature,
             humidity: humidity,
-            water: intensityPump*(endPump - startPump)/1000,
+            water: intensityPump*(endPump - startPump)/1000000,
             date_time: endPump
         });
     }

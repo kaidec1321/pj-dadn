@@ -38,7 +38,24 @@ var userSchema = mongoose.Schema({
     }
 });
 
-var user = mongoose.model('user', userSchema);
+userSchema.statics.authenticate = function (user, password, callback) {
+    console.log(user+password);
+    User.findOne({ user_name: user }).exec(function (err, user) {
+        if (err) {
+          return callback(err)
+        } else if (!user) {
+          var err = new Error('User not found.');
+          err.status = 401;
+          return callback(err);
+        }
+        if (password === user.password) {
+            return callback(null, user);
+        } 
+        else {
+            return callback();
+        }
+    })
+}
 
 async function user_Get(doc, res) {
     const prm = await user.findOne({
@@ -88,6 +105,16 @@ async function user_Post(doc, res = {}) {
     });
 }
 
+// user.create({
+//     _id: mongoose.Types.ObjectId(),
+//     user_name: "admin",
+//     password: "admin",
+//     name: "admin",
+//     birth_date: new Date(12,1,1999),
+//     avatar: "None",
+//     most_recent_login: new Date(16,7,2020,9,18,55)
+// });
+
 async function user_Put(doc, newDoc, res) {
     await user_Delete(doc);
     await user_Post(newDoc, res);
@@ -110,9 +137,6 @@ async function user_Delete(doc, res = {}) {
     });
 }
 
-module.exports = {
-    user_Post: user_Post,
-    user_Put: user_Put,
-    user_Delete: user_Delete,
-    user_Get: user_Get
-}
+var User = mongoose.model('User', userSchema);
+
+module.exports = User

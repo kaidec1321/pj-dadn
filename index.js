@@ -1,5 +1,5 @@
 var express = require('express');
-var mqtt = require('mqtt');
+var session = require('express-session');
 var bodyparser = require('body-parser');
 var multer = require('multer');
 var { schedule_Post, schedule_Put, schedule_Delete, schedule_Get } = require('./database/schedule.js');
@@ -9,10 +9,19 @@ const { request } = require('http');
 const { Db } = require('mongodb');
 var task = null;
 var pumpState = false;
+var User = require('./database/user.js');
 
 var app = express();
 var upload = multer();
 
+// middleware
+var loginCheck = function (req, res, next) {
+    if (req.session && req.session.userId) {
+      return next();
+    } else {
+      return res.redirect('/login');
+    }
+}  
 
 app.set('views', './views');
 app.set('view engine', 'ejs');
@@ -21,6 +30,23 @@ app.use(express.static('public'));
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(upload.array());
+app.use(session({
+    secret: 'mySecretKey',
+    resave: true,
+    saveUninitialized: false
+}));
+
+app.get('/logout', function(req, res, next) {
+    if (req.session) {
+      req.session.destroy(function(err) {
+        if (err) {
+          return next(err);
+        } else {
+          return res.redirect('/');
+        }
+      });
+    }
+  });
 
 // Code tương tác iot
 
@@ -32,27 +58,28 @@ app.get('/login', (req, res) => {
     res.sendFile(__dirname + '/views/login.html');
 });
 
-app.post('/homepage', function(req, res) {
-    console.log(req.body);
-    if (req.body.btnLogin == "Đăng nhập") {
-        var username = req.body.username;
-        var password = req.body.password;
-        if (username == "") {
-            //
+app.post('/', (req, res, next) => {
+    User.authenticate(req.body.user, req.body.password, function (error, user) {
+        if (error || !user) {
+          return res.redirect('/loginfail');
+        } else {
+          console.log(user.user_name + "have just logged in.")
+          req.session.userId = user._id;
+          return res.redirect('/homepage');
         }
-        else if (password == ""){
-            // alert("Bạn chưa nhập mật khẩu!");
-        }
-    } 
-    res.sendFile(__dirname+'/views/homepage.html');
+      });
+})
+
+app.get('/loginfail', (req, res) => {
+    res.sendFile(__dirname + '/views/loginFail.html');
 });
 
-app.get('/homepage', (req, res) => {
+app.get('/homepage', loginCheck, (req, res) => {
     res.sendFile(__dirname + '/views/homepage.html');
 });
 
 //Pumping
-app.get('/pumping', (req, res) => {
+app.get('/pumping', loginCheck, (req, res) => {
     res.sendFile(__dirname + '/views/pumping.html');
 });
 
@@ -77,6 +104,7 @@ app.post('/pumping/submit-form', function(req, res) {
             return;
         }
         if (req.body.type == "force") {
+            publishPumpMessage("0");
             publishPumpMessage("1", req.body.minutes, req.body.intensity);
             console.log("Overwrite Task!");
             res.status(200).send("success");
@@ -89,11 +117,11 @@ app.post('/pumping/submit-form', function(req, res) {
 
 //VIEW STATUS
 
-app.get('/temphumi', (req, res) => {
+app.get('/temphumi', loginCheck, (req, res) => {
     res.sendFile(__dirname + '/views/temphumi.html');
 });
 
-app.get("/data", (req, res) => {
+app.get("/data", loginCheck, (req, res) => {
     // console.log('requesting data')
     status = getTempHumi();
     // console.log(status)
@@ -102,7 +130,7 @@ app.get("/data", (req, res) => {
 
 //View history
 
-app.get('/history', (req, res) => {
+app.get('/history', loginCheck, (req, res) => {
     res.sendFile(__dirname + '/views/history.html');
 });
 
@@ -126,11 +154,11 @@ app.post('/history/get', (req, res) => {
 // });
 
 //Scheduling
-app.get('/scheduling', (req, res) => {
+app.get('/scheduling', loginCheck, (req, res) => {
     res.sendFile(__dirname + '/views/scheduling.html');
 });
 
-app.get('/scheduling/get', (req, res) => {
+app.get('/scheduling/get', loginCheck, (req, res) => {
     schedule_Get(res);
 });
 

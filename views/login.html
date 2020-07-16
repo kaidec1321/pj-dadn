@@ -8,19 +8,19 @@
     <link rel="stylesheet" href="/css/login.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
+    <script src="/script/bootstrap-notify.js"></script>
 </head>
 <body>
 
-    <form class="box" action="/homepage" method="POST" id = "my-form">
+    <form class="box" action="/" method="POST" id = "my-form" onsubmit="check(event)">
         <h1>
             HỆ THỐNG
         </h1>
         <h1>
             TƯỚI CÂY THÔNG MINH
         </h1>
-            <input type="text" name="username" placeholder="Tên đăng nhập" />
-            <input type="password" name="password" placeholder="Mật khẩu" />
+            <input type="text" id="user" name="user" placeholder="Tên đăng nhập" />
+            <input type="password" id="password" name="password" placeholder="Mật khẩu" />
             <input type="submit" name="btnLogin" value="Đăng nhập" />
         
             <!-- <a href="homepage" class="btn">Đăng nhập</a> -->
